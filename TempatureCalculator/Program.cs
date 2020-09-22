@@ -1,114 +1,90 @@
 ﻿using System;
-
+using System.Collections.Generic;
 
 namespace TempatureCalculator
 {
     class Program
     {
-        static void Main(string[] args)
+        // maybe use string instead of char for key for ease- although char might give peformance benefit
+        public static Dictionary<char, string> UnitType { get; private set; } = new Dictionary<char, string>()
         {
-            string convertFromType;
-            string convertToType;
-            double originalTemp;
+            { 'c', "Celsius"},
+            { 'f', "Fahrenheit" },
+            { 'k', "Kelvin" },
+            { 'r', "Rankine" }
+        };
 
+        static void Main()
+        {
             while (true)
             {
-                (convertFromType, convertToType) = Menu();
-                originalTemp = GetOriginalTemp(convertFromType);
-
-                if (convertToType == convertFromType)
-                {
-                    Console.WriteLine($"{convertToType}: {originalTemp}");
-                }
-                else
-                {
-                    Console.WriteLine($"{convertToType}: {ConvertTemp(originalTemp, convertFromType, convertToType)}\n");
-                }
+                Tempature originalTemp = GetOriginalTemp();
+                string tempToConvertTo = GetTempToConvertTo();  // should change to char in future
+                Console.WriteLine($"Tempature in {UnitType[tempToConvertTo[0]]}: {originalTemp.ConvertToCelsius().ConvertFromCelsius(tempToConvertTo)}\n");  // look at this monstrosity
             }
         }
-        static (string, string) Menu()
+
+        static Tempature GetOriginalTemp()
         {
-            Console.WriteLine("Tempatures: (C)elsius, (F)ahrenheit, (K)elvin (Ctrl + C to quit)");
-            string convertFromType;
-            string convertToType;
+            Console.WriteLine("Tempatures: (C)elsius, (F)ahrenheit, (K)elvin, (R)ankine (Ctrl + C to quit)");
+            string convertFromTypeString;
+
             do
             {
                 Console.Write("Convert From: ");
-                convertFromType = Console.ReadLine().ToLower();
-            } while (!ValidateType(convertFromType));
+                convertFromTypeString = Console.ReadLine().ToLower();
+            } while (!ValidateType(convertFromTypeString));
 
+            double value = GetOriginalTempValue(convertFromTypeString[0]);
+
+            switch (convertFromTypeString)
+            {
+                case "c":
+                    return new Celsius(value);
+                case "f":
+                    return new Fahrenheit(value);
+                case "k":
+                    return new Kelvin(value);
+                case "r":
+                    return new Rankine(value);
+                default:
+                    throw new ArgumentException("Invalid string type/unit");
+            }
+        }
+        static string GetTempToConvertTo()
+        {
+            string convertToTypeString;
             do
             {
                 Console.Write("Convert To: ");
-                convertToType = Console.ReadLine().ToLower();
-            } while (!ValidateType(convertToType));
-
-            return (convertFromType, convertToType);
-        }
+                convertToTypeString = Console.ReadLine().ToLower();
+            } while (!ValidateType(convertToTypeString));
+            return convertToTypeString;
+        }       
         static bool ValidateType(string type)
         {
-            string[] validTypes = { "c", "f", "k" };
-            if (Array.IndexOf(validTypes, type) >= 0)
+            // must be better way to do this with already existing dict
+            List<string> validTypes = new List<string>(){ "c", "f", "k", "r"};
+            if (validTypes.Contains(type))
             {
                 return true;
             }
             else
             {
-                Console.WriteLine("Invalid tempature type, must be (C)elsius, (F)ahrenheit, or (K)elvin");
+                Console.WriteLine("Invalid tempature type, must be (C)elsius, (F)ahrenheit, (K)elvin, or (R)ankine");
                 return false;
             }
         }
-        static double GetOriginalTemp(string type)
+        static double GetOriginalTempValue(char type)
         {
             double temp;
-            Console.Write($"Tempature in {type}: ");
+            Console.Write($"Tempature in {UnitType[type]}: ");
             while (!Double.TryParse(Console.ReadLine(), out temp))
             {
                 Console.WriteLine("Tempature must be a number");
                 Console.Write($"Tempature in {type}: ");
             }
             return temp;
-        }
-        static double ConvertTemp(double temp, string convertFromType, string convertToType)
-        {
-            if (convertFromType == "k" || convertFromType == "k")
-            {
-                if (convertToType == "c")
-                {
-                    return temp - 273.15;
-                }
-                else if (convertFromType == "c")
-                {
-                    return temp + 273.15;
-                }
-                else if (convertToType == "f")
-                {
-                    return CelsiusFahrenheit(temp - 273.15, convertToType);
-                }
-                else if (convertFromType == "f")
-                {
-                    return CelsiusFahrenheit(temp + 273.15, convertToType);
-                }
-                else
-                {
-                    throw new ArgumentException("Types that can be used to convert to only consist of c, f, k");
-                }
-            }
-            else
-            {
-                return CelsiusFahrenheit(temp, convertToType);
-            }
-        }
-        static double CelsiusFahrenheit(double temp, string convertTo)
-        {
-            if (convertTo == "c")
-            {
-                return (temp - 32) * 5 / 9;
-            }
-            else
-            {
-                return (temp * 9 / 5) + 32;
-            }
         }
     }
 }
