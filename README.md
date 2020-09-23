@@ -1,2 +1,3 @@
 # Tempature Calculator
-Simple C# Program to convert tempature units
+Overcomplicated C# Program to convert tempature units
+Created to practice using abstract classes
