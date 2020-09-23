@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TempatureCalculator
 {
     class Program
     {
-        // maybe use string instead of char for key for ease- although char might give peformance benefit
+        // only use this once in GetOriginalTempValue, possibly redundant
         public static Dictionary<char, string> UnitType { get; private set; } = new Dictionary<char, string>()
         {
             { 'c', "Celsius"},
@@ -19,8 +20,8 @@ namespace TempatureCalculator
             while (true)
             {
                 Tempature originalTemp = GetOriginalTemp();
-                string tempToConvertTo = GetTempToConvertTo();  // should change to char in future
-                Console.WriteLine($"Tempature in {UnitType[tempToConvertTo[0]]}: {originalTemp.ConvertToCelsius().ConvertFromCelsius(tempToConvertTo)}\n");  // look at this monstrosity
+                char tempToConvertTo = GetTempToConvertTo();
+                Console.WriteLine($"Tempature in {UnitType[tempToConvertTo]}: {originalTemp.ConvertToCelsius().ConvertFromCelsius(tempToConvertTo)}\n");  // look at this monstrosity
             }
         }
 
@@ -34,24 +35,24 @@ namespace TempatureCalculator
                 Console.Write("Convert From: ");
                 convertFromTypeString = Console.ReadLine().ToLower();
             } while (!ValidateType(convertFromTypeString));
+            char convertFromType = convertFromTypeString[0];
+            double value = GetOriginalTempValue(convertFromType);
 
-            double value = GetOriginalTempValue(convertFromTypeString[0]);
-
-            switch (convertFromTypeString)
+            switch (convertFromType)
             {
-                case "c":
+                case 'c':
                     return new Celsius(value);
-                case "f":
+                case 'f':
                     return new Fahrenheit(value);
-                case "k":
+                case 'k':
                     return new Kelvin(value);
-                case "r":
+                case 'r':
                     return new Rankine(value);
                 default:
                     throw new ArgumentException("Invalid string type/unit");
             }
         }
-        static string GetTempToConvertTo()
+        static char GetTempToConvertTo()
         {
             string convertToTypeString;
             do
@@ -59,13 +60,11 @@ namespace TempatureCalculator
                 Console.Write("Convert To: ");
                 convertToTypeString = Console.ReadLine().ToLower();
             } while (!ValidateType(convertToTypeString));
-            return convertToTypeString;
+            return convertToTypeString[0];
         }       
-        static bool ValidateType(string type)
+        static bool ValidateType(string stringType)
         {
-            // must be better way to do this with already existing dict
-            List<string> validTypes = new List<string>(){ "c", "f", "k", "r"};
-            if (validTypes.Contains(type))
+            if (UnitType.ContainsKey(stringType[0]))
             {
                 return true;
             }
@@ -82,7 +81,7 @@ namespace TempatureCalculator
             while (!Double.TryParse(Console.ReadLine(), out temp))
             {
                 Console.WriteLine("Tempature must be a number");
-                Console.Write($"Tempature in {type}: ");
+                Console.Write($"Tempature in {UnitType[type]}: ");
             }
             return temp;
         }
