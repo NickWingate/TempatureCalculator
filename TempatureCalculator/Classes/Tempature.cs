@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 
 namespace TempatureCalculator
 {
@@ -18,7 +18,7 @@ namespace TempatureCalculator
 
         public override string ToString()
         {
-            return LocalTemp.ToString();
+            return Math.Round(LocalTemp).ToString();
         }
     }
 }

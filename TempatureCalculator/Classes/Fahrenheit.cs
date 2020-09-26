@@ -1,10 +1,10 @@
-﻿
-
-namespace TempatureCalculator
+﻿namespace TempatureCalculator
 {
     public class Fahrenheit : Tempature
     {
-        public Fahrenheit(double temp) : base(temp) { }
+        public Fahrenheit(double temp) : base(temp)
+        {
+        }
 
         public override Celsius ConvertToCelsius()
         {

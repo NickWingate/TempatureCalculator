@@ -1,10 +1,10 @@
-﻿
-
-namespace TempatureCalculator
+﻿namespace TempatureCalculator
 {
     public class Kelvin : Tempature
     {
-        public Kelvin(double temp) : base(temp) { }
+        public Kelvin(double temp) : base(temp)
+        {
+        }
 
         public override Celsius ConvertToCelsius()
         {

@@ -1,10 +1,10 @@
-﻿
-
-namespace TempatureCalculator
+﻿namespace TempatureCalculator
 {
     public class Rankine : Tempature
     {
-        public Rankine(double temp) : base(temp) { }
+        public Rankine(double temp) : base(temp)
+        {
+        }
 
         public override Celsius ConvertToCelsius()
         {

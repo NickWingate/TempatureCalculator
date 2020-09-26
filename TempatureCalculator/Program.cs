@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TempatureCalculator
 {
-    class Program
+    internal class Program
     {
         // only use this once in GetOriginalTempValue, possibly redundant
         public static Dictionary<char, string> UnitType { get; private set; } = new Dictionary<char, string>()
@@ -15,17 +14,17 @@ namespace TempatureCalculator
             { 'r', "Rankine" }
         };
 
-        static void Main()
+        private static void Main()
         {
             while (true)
             {
                 Tempature originalTemp = GetOriginalTemp();
                 char tempToConvertTo = GetTempToConvertTo();
-                Console.WriteLine($"Tempature in {UnitType[tempToConvertTo]}: {originalTemp.ConvertToCelsius().ConvertFromCelsius(tempToConvertTo)}\n");  // look at this monstrosity
+                Console.WriteLine($"Tempature in {UnitType[tempToConvertTo]}: {originalTemp.ConvertToCelsius().ConvertFromCelsius(tempToConvertTo)}(nearest int)\n");  // look at this monstrosity
             }
         }
 
-        static Tempature GetOriginalTemp()
+        private static Tempature GetOriginalTemp()
         {
             Console.WriteLine("Tempatures: (C)elsius, (F)ahrenheit, (K)elvin, (R)ankine (Ctrl + C to quit)");
             string convertFromTypeString;
@@ -42,17 +41,22 @@ namespace TempatureCalculator
             {
                 case 'c':
                     return new Celsius(value);
+
                 case 'f':
                     return new Fahrenheit(value);
+
                 case 'k':
                     return new Kelvin(value);
+
                 case 'r':
                     return new Rankine(value);
+
                 default:
                     throw new ArgumentException("Invalid string type/unit");
             }
         }
-        static char GetTempToConvertTo()
+
+        private static char GetTempToConvertTo()
         {
             string convertToTypeString;
             do
@@ -61,8 +65,9 @@ namespace TempatureCalculator
                 convertToTypeString = Console.ReadLine().ToLower();
             } while (!ValidateType(convertToTypeString));
             return convertToTypeString[0];
-        }       
-        static bool ValidateType(string stringType)
+        }
+
+        private static bool ValidateType(string stringType)
         {
             if (UnitType.ContainsKey(stringType[0]))
             {
@@ -74,7 +79,8 @@ namespace TempatureCalculator
                 return false;
             }
         }
-        static double GetOriginalTempValue(char type)
+
+        private static double GetOriginalTempValue(char type)
         {
             double temp;
             Console.Write($"Tempature in {UnitType[type]}: ");
